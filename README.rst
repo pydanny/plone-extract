@@ -10,14 +10,14 @@ Introduction
 A common use case in Plone is content extraction. Either to another Plone site or to another framework. Existing Plone export methods are either incomplete or rely heavily on complex XML structures. This project will focus on keeping things simple and easy. Some quick notes:
 
 #. Rather than traversing the content of the system, a simple portal_catalog query against all content will be performed.
+#. Complex data will be stored in dictionaroes that reside in lists.
 #. Content types will be stored in one file, users in another, and so forth. Rendering multiple types of data in one file adds too much complexity.
-#. Each content item is represented by a dictionary.
 #. The export format is JSON.
 
-Content Type Format
-===================
+Content Type Extract Format
+===========================
 
-Each content type will be represented by a standard python dict. Since Plone content types have many of the metadata fields defined by `Dublin core`_ as their standard fields, the extract will include those fields. It will add these as well:
+Each content type object will be represented by a python dict, and these content type representations will be stored in a python list. Since Plone content types have many of the metadata fields defined by `Dublin core`_ as their standard fields, the extract will include those fields (title, description, creator, etc). It will add these as well:
 
 :id:
     More than just a standard Zope id, this displays the location of the content in the Plone heirarchy. So instead of just ``my-content`` you would get ``root/major-content-section/sub-content-section/my-content``. Based off of this you can infer the location of the content within the architecture of the site.
@@ -30,5 +30,24 @@ Each content type will be represented by a standard python dict. Since Plone con
     
 :custom_fields:
     This field provides a dictionary that lists the names of all custom fields and the content within.
+    
+User Extract Format
+===================
+
+Each user will be represented by a python dict in a python list.
+
+References/Relations
+====================
+
+References and Relations between objects will be stored in a list of tuples. Tuples will have three elements (source_id, target_id, type):
+
+:source_id:
+    The source_id is the object whom is the source of the relationship.
+
+:target_id:
+    The target_id is the object whom is the target of the relationship.
+
+:type:
+    The type tells you if this is a ``reference``, ``relationship``, or something other custom method of having two objects connect to each other in a non-heirarchical manner.
 
 .. _Dublin core: http://dublincore.org/
